@@ -60,7 +60,12 @@ def isDivisibleByTwo(num):
         return True
         extraCode = "Extra code"
         longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
+        longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
+        longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
     else:
+        longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
+        longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
+        longExtraCode = extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode + extraCode
         return False
 
 print(isDivisibleByTwo(4))

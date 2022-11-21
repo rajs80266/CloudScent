@@ -1,6 +1,7 @@
 from copy import copy
 
 initialCodeSmellsStatistic = {
+    "repetitiveCodeLines" : 0,
     "DeadCodesAfterReturn" : 0,
     "MultipleReturnStatementsInFunction" : 0,
     "LongStatements" : 0,
@@ -32,6 +33,38 @@ def getFunctionName(line):
 
 def hasReturnStatement(line):
     return "return" in line.split()
+
+def checkRepetitiveCode(code):
+    combinedMultipleLines = []
+    for i in range(len(code) - 2):
+        flag = True
+        codeLines = ""
+        for j in range(i, i + 3):
+            if (code[j].lstrip() == ""):
+                flag = False
+                break
+            codeLines += code[j].lstrip()
+        if (flag):
+            combinedMultipleLines.append({ "codeLines": codeLines, "lineRange": [i + 1, i + 3] })
+    newlist = sorted(combinedMultipleLines, key=lambda d: d['codeLines'])
+    i = 0
+    j = 1
+    while(j < len(newlist)):
+        if (newlist[j]["codeLines"] == newlist[i]["codeLines"]):
+            j += 1
+        else:
+            if ((i + 1) != j):
+                ranges = []
+                for k in range(i, j):
+                    ranges.append(newlist[k]['lineRange'])
+                describeCodeSmell(
+                    "Repetative more than 2 lines of code found:\n" + newlist[i]["codeLines"] + " at " + str(ranges),
+                    newlist[i]['lineRange'][0],
+                    newlist[j - 1]['lineRange'][1],
+                    "repetitiveCodeLines"
+                )
+            i = j
+            j = i + 1
 
 def checkDeadcodeAfterReturn(code, i):
     numberOfLines = len(code)
@@ -114,6 +147,7 @@ def findCodeSmells(fileName):
     code = file1.readlines()
     numberOfLines = len(code)
     i = 0
+    checkRepetitiveCode(code)
     while (i < numberOfLines):
         if (hasReturnStatement(code[i])):
             checkDeadcodeAfterReturn(code, i)
@@ -128,7 +162,7 @@ functionNames = []
 findCodeSmells('file1.py')
 print(codeSmellsStatistic)
 
-codeSmellsStatistic = copy(initialCodeSmellsStatistic)
-functionNames = []
-findCodeSmells('codeSmellDetection.py')
-print(codeSmellsStatistic)
+# codeSmellsStatistic = copy(initialCodeSmellsStatistic)
+# functionNames = []
+# findCodeSmells('codeSmellDetection.py')
+# print(codeSmellsStatistic)
