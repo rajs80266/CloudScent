@@ -1,4 +1,6 @@
 from copy import copy
+from csv import DictWriter
+import os
 
 initialCodeSmellsStatistic = {
     "repetitiveCodeLines" : 0,
@@ -69,6 +71,7 @@ def checkRepetitiveCode(code):
 def checkDeadcodeAfterReturn(code, i):
     numberOfLines = len(code)
     leadingSpaces = getLeadingSpaces(code[i])
+
     j = i + 1
     while (j < numberOfLines and leadingSpaces == getLeadingSpaces(code[j])):
         j += 1
@@ -78,9 +81,10 @@ def checkDeadcodeAfterReturn(code, i):
 def checkFunctionHavingMultipleReturn(code, i):
     numberOfLines = len(code)
     leadingSpaces = getLeadingSpaces(code[i])
+
     j = i
     returnCounts = []
-    while (j < numberOfLines and (leadingSpaces <= getLeadingSpaces(code[j])) or code[j].lstrip() == ""):
+    while (j < numberOfLines and (leadingSpaces <= getLeadingSpaces(code[j]) or code[j].lstrip() == "")):
         if (hasReturnStatement(code[j])): returnCounts.append(j + 1)
         j += 1
     if (len(returnCounts) > 1):
@@ -107,8 +111,9 @@ def checkSameFunctionNames(functionNames, numberOfLines):
 def checkLongBlocks(code, i, blockType):
     numberOfLines = len(code)
     leadingSpaces = getLeadingSpaces(code[i])
+
     j = i
-    while (j < numberOfLines and (leadingSpaces <= getLeadingSpaces(code[j])) or code[j].lstrip() == ""):
+    while (j < numberOfLines and (leadingSpaces <= getLeadingSpaces(code[j]) or code[j].lstrip() == "")):
         j += 1
     if (blockType == "CLASS" and (j - i) > 60):
         describeCodeSmell('Long Class found', i, j - 1, 'LongClassOrMethod')
@@ -157,12 +162,41 @@ def findCodeSmells(fileName):
         i += 1
     checkSameFunctionNames(functionNames, numberOfLines)
 
-codeSmellsStatistic = copy(initialCodeSmellsStatistic)
-functionNames = []
-findCodeSmells('file1.py')
-print(codeSmellsStatistic)
+folders = ['./']
+pythonFilePaths = []
+folderIndex = 0
+while (folderIndex < len(folders)):
+    folder = folders[folderIndex]
+    contents = os.listdir(folder)
+    for content in contents:
+        contentPath = folder + content
+        if (os.path.isfile(contentPath)):
+            if (contentPath.endswith(".py") and contentPath != './codeSmellDetection.py'):
+                pythonFilePaths.append(contentPath)
+        else:
+            folders.append(contentPath + '/')
+    folderIndex += 1
 
-# codeSmellsStatistic = copy(initialCodeSmellsStatistic)
-# functionNames = []
-# findCodeSmells('codeSmellDetection.py')
-# print(codeSmellsStatistic)
+codeSmellsStatistics = []
+for pythonFilePath in pythonFilePaths:
+    codeSmellsStatistic = copy(initialCodeSmellsStatistic)
+    functionNames = []
+    findCodeSmells(pythonFilePath)
+    codeSmellsStatistic['file'] = pythonFilePath
+    codeSmellsStatistics.append(codeSmellsStatistic)
+
+with open('codeSmellData.csv','w') as outfile:
+    writer = DictWriter(outfile, (
+        'file',
+        'repetitiveCodeLines',
+        'DeadCodesAfterReturn',
+        'MultipleReturnStatementsInFunction',
+        'LongStatements',
+        'MultipleSameFunctionNames',
+        'LongClassOrMethod',
+        'LongLoopBlocks',
+        'LongConditionalBlocks',
+        'LongParameterList'
+    ))
+    writer.writeheader()
+    writer.writerows(codeSmellsStatistics)
