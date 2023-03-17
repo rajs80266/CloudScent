@@ -149,8 +149,10 @@ def checkBlocks(code, i):
 
 def findCodeSmells(fileName):
     file1 = open(fileName, 'r')
+    print(fileName)
     code = file1.readlines()
     numberOfLines = len(code)
+    codeSmellsStatistic['numberOfLines'] = numberOfLines
     i = 0
     checkRepetitiveCode(code)
     while (i < numberOfLines):
@@ -185,7 +187,7 @@ for pythonFilePath in pythonFilePaths:
     codeSmellsStatistic['file'] = pythonFilePath
     codeSmellsStatistics.append(codeSmellsStatistic)
 
-with open('codeSmellData.csv','w') as outfile:
+with open('openStack-codeSmellData.csv','w') as outfile:
     writer = DictWriter(outfile, (
         'file',
         'repetitiveCodeLines',
@@ -196,7 +198,8 @@ with open('codeSmellData.csv','w') as outfile:
         'LongClassOrMethod',
         'LongLoopBlocks',
         'LongConditionalBlocks',
-        'LongParameterList'
+        'LongParameterList',
+        'numberOfLines'
     ))
     writer.writeheader()
     writer.writerows(codeSmellsStatistics)
