@@ -188,7 +188,7 @@ for pythonFilePath in pythonFilePaths:
     codeSmellsStatistic['file'] = pythonFilePath
     codeSmellsStatistics.append(codeSmellsStatistic)
 
-with open('openStack-codeSmellData.csv','w') as outfile:
+with open('codeSmellData.csv','w') as outfile:
     writer = DictWriter(outfile, (
         'file',
         'repetitiveCodeLines',
