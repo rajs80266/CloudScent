@@ -1,4 +1,4 @@
-To use this follow following steps
+To detect codesmell in your projects follow the steps
 1. Run following commands
     - git clone https://github.com/rajs80266/CloudScent.git
     - cd cd CodeSmellDetection
