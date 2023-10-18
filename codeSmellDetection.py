@@ -164,6 +164,7 @@ def findCodeSmells(fileName):
         i += 1
     checkSameFunctionNames(functionNames, numberOfLines)
 
+# Update root folder path
 folders = ['./']
 pythonFilePaths = []
 folderIndex = 0
